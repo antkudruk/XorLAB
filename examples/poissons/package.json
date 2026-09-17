@@ -1,0 +1,22 @@
+{
+  "name": "poissons",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "preprocess": "xorlab-preprocessor"
+  },
+  "dependencies": {
+    "xorlab": "file:../../xorlab",
+    "xorlab-linalg": "file:../../xorlab-linalg"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "preprocessor-library": "file:../../preprocessor-library",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.2"
+  }
+}

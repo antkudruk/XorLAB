@@ -1,0 +1,8 @@
+{
+  "jest.rootPath": "xorlab",
+  "jest.jestCommandLine": "npm run test --",
+  "jest.autoRun": {
+    "watch": false,
+    "onSave": "test-file"
+  }
+}

@@ -1,0 +1,33 @@
+---
+description: Widget callbackTable and styleSheet configuration patterns
+globs: xorlab/src/renderer/Widget.ts,examples/**/view/**/*.ts
+alwaysApply: false
+---
+
+# Widget Configuration
+
+See [README Widget configuration](../../README.md#widget-configuration).
+
+## Best practices
+
+- Define `callbackTable` and `styleSheet` at **mount time** (in `mountWidget`, `render*.ts`, or `App.tsx`), not inline on `segFactory` / `cardFactory`.
+- `callbackTable` keys are `typeName` values from preprocessor-generated `GenEntities` (globally unique across segments and cards).
+- `styleSheet` keys are segment `typeName` values from `GenSegments`.
+- When a `callbackTable` entry exists for a type + event, it **overrides** any inline mouse handler on the factory. Otherwise the inline handler is used.
+
+## Example mount pattern
+
+```typescript
+mountWidget({
+  host,
+  vertical,
+  horizontal,
+  card,
+  styleSheet: createPeriodicTableStyleSheet(),
+  callbackTable: createPeriodicTableCallbackTable({ elementSelect }),
+});
+```
+
+Keep domain factories free of inline mouse handlers and `style` when the example provides view-level `callbackTable` / `styleSheet` modules. Layout-only examples (e.g. timetable) may pass `styleSheet` alone and omit `callbackTable`.
+
+Do **not** store `CardVi` or `SegVi` in application or example code. Widget owns those trees; look up `card.vis[treeUuid]` at the call site. See [CardVi and SegVi](../../README.md#cardvi-and-segvi) and [cardvi-segvi.mdc](cardvi-segvi.mdc).

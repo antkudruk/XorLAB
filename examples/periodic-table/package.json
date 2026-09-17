@@ -1,0 +1,28 @@
+{
+  "name": "periodic-table",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "preprocess": "xorlab-preprocessor"
+  },
+  "dependencies": {
+    "xorlab": "file:../../xorlab",
+    "xorlab-interactive": "file:../../xorlab-interactive"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^22.13.10",
+    "jsdom": "^26.0.0",
+    "preprocessor-library": "file:../../preprocessor-library",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.2",
+    "vitest": "^3.0.9"
+  }
+}

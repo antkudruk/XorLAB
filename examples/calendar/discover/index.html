@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Segment discovery</title>
+    <link rel="stylesheet" href="/src/app.css" />
+  </head>
+  <body>
+    <header class="toolbar">
+      <h1>Segment discovery</h1>
+      <a class="toolbar-link" href="/">Back to calendar</a>
+    </header>
+
+    <main class="app-main">
+      <section class="view-section">
+        <h2>Monthly grid — horizontal content</h2>
+        <p class="view-intro">
+          Discovers MonthColListSeg on the horizontal axis; DiscoveryTreePlaceSeg is
+          vertical.
+        </p>
+        <div
+          id="discover-monthly-horizontal"
+          class="widget-host discover-host"
+          role="region"
+          aria-label="Monthly grid — horizontal content"
+        ></div>
+      </section>
+
+      <section class="view-section">
+        <h2>Monthly grid — vertical content</h2>
+        <p class="view-intro">
+          Discovers MonthRowListSeg on the vertical axis; DiscoveryTreePlaceSeg is
+          horizontal.
+        </p>
+        <div
+          id="discover-monthly-vertical"
+          class="widget-host discover-host"
+          role="region"
+          aria-label="Monthly grid — vertical content"
+        ></div>
+      </section>
+
+      <section class="view-section">
+        <h2>Year overview — horizontal content</h2>
+        <p class="view-intro">
+          Discovers ColumnsHeaderSeg on the horizontal axis; DiscoveryTreePlaceSeg is
+          vertical.
+        </p>
+        <div
+          id="discover-year-horizontal"
+          class="widget-host discover-host"
+          role="region"
+          aria-label="Year overview — horizontal content"
+        ></div>
+      </section>
+
+      <section class="view-section">
+        <h2>Year overview — vertical content</h2>
+        <p class="view-intro">
+          Discovers RowsHeaderSeg on the vertical axis; DiscoveryTreePlaceSeg is
+          horizontal.
+        </p>
+        <div
+          id="discover-year-vertical"
+          class="widget-host discover-host"
+          role="region"
+          aria-label="Year overview — vertical content"
+        ></div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+---
+description: Never store CardVi or SegVi in application or example code; Widget owns Vi trees
+alwaysApply: true
+---
+
+# Do Not Store CardVi or SegVi
+
+See [README CardVi and SegVi](../../README.md#cardvi-and-segvi).
+
+`Widget` fully owns `CardVi` and `SegVi` (create, rebind, collapse/expand detach, destroy). Application and example code must **not** store them as fields, maps, or caches. A held Vi goes stale after collapse, splice, remount, or `Widget.destroy`.
+
+Keep `ICard` / `ISeg`. Look up `card.vis[treeUuid]` or `seg.vis[treeUuid]` at the call site (use `event.widgetTreeUuids.card` or `widget.treeUuids.card`) and drop the reference. Do not import `CardVi` / `SegVi` into app code to stash instances.
+
+Incorrect:
+
+```typescript
+class MyController {
+  private cardVi: CardVi;
+  constructor(card: ICard, treeUuid: string) {
+    this.cardVi = card.vis[treeUuid];
+  }
+}
+```
+
+Correct:
+
+```typescript
+const vi = card.vis[event.widgetTreeUuids.card];
+vi?.htmlElement?.classList.add("...");
+```
+
+Framework code inside `xorlab/src/renderer` may hold Vi references. `xorlab-interactive` controllers keep `ICard` (and sometimes `HTMLElement`) and re-read `card.vis[treeUuid]` each time.

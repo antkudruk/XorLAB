@@ -1,0 +1,12 @@
+---
+description: All code must be in English, no Cyrillic characters allowed
+alwaysApply: true
+---
+
+# English Only
+
+All code in this project is written in English.
+
+- **Cyrillic characters are not allowed** in source code, comments, strings, variable names, or documentation within the codebase.
+- Use English for identifiers, comments, log messages, and user-facing strings.
+- Exception: Localized user-facing text intended for display in non-English UIs may use other scripts, but should be kept in localization files, not in the main source code.

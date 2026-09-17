@@ -1,0 +1,236 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #1a1a1a;
+  background: #f6f7f9;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #d8dde6;
+}
+
+.toolbar h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.toolbar-link {
+  margin-left: auto;
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.toolbar-link:hover {
+  text-decoration: underline;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem;
+}
+
+.view-section h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.view-intro {
+  margin: 0 0 0.75rem;
+  color: #4a5568;
+}
+
+.view-status {
+  margin: 0 0 0.75rem;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.selection-input-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.selection-input-label {
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.selection-input {
+  flex: 1 1 180px;
+  min-width: 160px;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.selection-apply {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid #94a3b8;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.selection-apply:hover {
+  background: #f8fafc;
+}
+
+.selection-input-error {
+  margin: 0 0 0.75rem;
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+.selection-input-error[hidden] {
+  display: none;
+}
+
+.widget-host {
+  position: relative;
+  overflow: auto;
+  width: 100%;
+  min-height: 470px;
+  background: #fff;
+  border: 1px solid #d8dde6;
+  border-radius: 8px;
+}
+
+.discover-host {
+  min-height: 360px;
+  height: 420px;
+}
+
+#monthly-grid-host {
+  height: 600px;
+  width: 600px;
+}
+
+.parameters-dialog {
+  border: 1px solid #d8dde6;
+  border-radius: 8px;
+  padding: 1.25rem;
+  min-width: 280px;
+}
+
+.parameters-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.parameters-dialog label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.parameters-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.MonthCard {
+  border: 1px solid #c5cdd8;
+  border-radius: 6px;
+  background: #fafbfc;
+  padding: 4px;
+}
+
+.MonthCard-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 2px 4px;
+  margin-bottom: 4px;
+}
+
+.DayCard {
+  border: 1px solid #e2e8f0;
+  font-size: 0.75rem;
+  text-align: center;
+  background: #fff;
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.DayCard--oddMonth {
+  background: #fff;
+}
+
+.DayCard--evenMonth {
+  background: #edf2f7;
+}
+
+.DayCard--outside {
+  color: #a0aec0;
+  background: #f7fafc;
+}
+
+.DayCard--selected {
+  box-shadow: inset 0 0 0 2px #1d4ed8;
+  font-weight: 600;
+}
+
+.MonthHeaderCard {
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-align: center;
+  border: 1px solid #cbd5e0;
+}
+
+.MonthHeaderCard--oddMonth {
+  background: #fff;
+}
+
+.MonthHeaderCard--evenMonth {
+  background: #edf2f7;
+}
+
+.YearHeaderCard {
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-align: center;
+  background: #edf2f7;
+  border: 1px solid #cbd5e0;
+}
+
+.WeekdayHeaderCard {
+  font-size: 0.75rem;
+  text-align: center;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.year-overview-header-host,
+.year-overview-day-host {
+  position: relative;
+  overflow: auto;
+  width: 100%;
+}
+
+.year-overview-header-host {
+  min-height: 72px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.year-overview-day-host {
+  min-height: 340px;
+}

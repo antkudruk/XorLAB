@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar example</title>
+    <link rel="stylesheet" href="/src/app.css" />
+  </head>
+  <body>
+    <header class="toolbar">
+      <h1>Calendar example</h1>
+      <a class="toolbar-link" href="/discover/">Segment discovery</a>
+    </header>
+
+    <main class="app-main">
+      <section class="view-section">
+        <h2>Monthly grid</h2>
+        <p class="view-intro">
+          Twelve month cards in a 4×3 grid for 2025. Day cells show only dates in
+          that month.
+        </p>
+        <p id="monthly-grid-status" class="view-status" aria-live="polite">
+          Loading monthly grid...
+        </p>
+        <div
+          id="monthly-grid-host"
+          class="widget-host"
+          role="region"
+          aria-label="Monthly grid calendar"
+        ></div>
+      </section>
+
+      <section class="view-section">
+        <h2>Year overview</h2>
+        <p class="view-intro">
+          Weekday rows and year/month/week columns for December 2025 through May 2026.
+        </p>
+        <div class="selection-input-row">
+          <label class="selection-input-label" for="calendar-selection-input">Set selection</label>
+          <input
+            id="calendar-selection-input"
+            class="selection-input"
+            type="text"
+            placeholder="YYYY-MM-DD"
+          />
+          <button type="button" id="calendar-selection-apply" class="selection-apply">Apply</button>
+        </div>
+        <p id="calendar-selection-error" class="selection-input-error" role="alert" hidden></p>
+        <p id="calendar-status" class="view-status" aria-live="polite">
+          Loading calendar grid...
+        </p>
+        <div
+          id="calendar-grid-host"
+          class="widget-host"
+          role="region"
+          aria-label="Calendar grid"
+        ></div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+---
+description: Prefer static HTML pages in examples; mount widgets into existing hosts
+globs: examples/**
+alwaysApply: false
+---
+
+# Static Example Pages
+
+Prefer static HTML for example page chrome. TypeScript should only mount widgets into hosts that already exist in the document.
+
+## Do
+
+- Put toolbars, headings, intros, forms, links, and widget host containers (`#…-host` divs) in HTML files (`index.html`, `discover/index.html`, etc.).
+- In `main.ts` / `render*.ts`, `querySelector` those hosts and call `mountWidget` / layout factories.
+- For extra routes, add a separate HTML entry and register it in Vite `build.rollupOptions.input` (see calendar `discover/index.html`).
+
+## Do not
+
+- Build page structure with `document.createElement`, `innerHTML`, or `root.replaceChildren()` for toolbars, sections, or host divs.
+- Wipe `document.body` and recreate an alternate page in JavaScript.
+
+## Exception
+
+Dynamic DOM inside `xorlab/src/renderer/Widget.ts` (and card / segment renderers) is expected — that is the widget tree, not example page chrome.
+
+## Incorrect
+
+```typescript
+export function mountDiscoverPage(root: HTMLElement): void {
+  root.replaceChildren();
+  const host = document.createElement("div");
+  host.id = "discover-monthly-horizontal";
+  root.appendChild(host);
+  mountWidget({ host, /* ... */ });
+}
+```
+
+## Correct
+
+```html
+<!-- discover/index.html -->
+<div id="discover-monthly-horizontal" class="widget-host"></div>
+```
+
+```typescript
+export function mountDiscoverPage(): void {
+  const host = document.querySelector<HTMLElement>("#discover-monthly-horizontal");
+  if (!host) throw new Error("Discover page markup is missing required hosts.");
+  mountWidget({ host, /* ... */ });
+}
+```

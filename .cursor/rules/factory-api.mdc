@@ -1,0 +1,48 @@
+---
+description: Use segFactory and cardFactory from xorlab; not basic-layer constructors
+alwaysApply: true
+---
+
+# Factory API
+
+Xorlab exposes typed factories from the `"xorlab"` package. Use these in application and example code.
+
+| Construct | Public API | Internal (do not import in app code) |
+|-----------|------------|--------------------------------------|
+| Segment | `segFactory` | `createSeg` in `xorlab/src/basic/Seg.ts` |
+| Card | `cardFactory` | `createCard` in `xorlab/src/basic/card/Card.ts` |
+
+The preprocessor scans `segFactory` and `cardFactory` calls and writes `generated/generated-lines.d.ts` (`GenSegments`) and `generated/generated-cards.d.ts` (`GenCards`). Always pass a string literal `typeName` so types are inferred.
+
+Use generated types as the source of truth for cards and segments:
+
+- card types: `GenCardTypes.<TypeName>`
+- segment types: `GenSegTypes.<TypeName>`
+
+Do not create parallel aliases with `ReturnType<typeof someCardFactory>` or `ReturnType<typeof someSegFactory>` when the generated GenEntity type already exists. See [No ReturnType Aliases](no-returntype.mdc).
+
+Do not annotate factory-helper returns as `ICard` / `ISeg` — that widens and drops inference. See [Infer Factory Return Types](infer-factory-returns.mdc).
+
+See [README Callback Typing Convention](../../README.md#callback-typing-convention) for `selfPos` and `cardFactories` typing and naming.
+
+See [README Factory API](../../README.md#factory-api) for layout patterns and examples.
+
+See [Direct Attrs](direct-attrs.mdc) — pass domain objects as `attrs`; do not map into parallel `*CardAttrs` types.
+
+Correct:
+
+```typescript
+import { segFactory, cardFactory, eArrayFactory, eMappedFactory } from "xorlab";
+
+export const groupSegFactory = (group: Group) =>
+  segFactory({ typeName: "GroupSeg", attrs: group });
+```
+
+Incorrect:
+
+```typescript
+import { createSeg } from "xorlab/src/basic/Seg";
+import { createCard } from "xorlab/src/basic/card/Card";
+```
+
+Do not deep-import from `xorlab/src/basic/*` in application or example code. Framework code inside xorlab may call `segFactory` from the facade layer.

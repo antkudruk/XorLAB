@@ -1,0 +1,21 @@
+{
+  "name": "xorlab-discover",
+  "version": "1.0.0",
+  "author": "Anton Kudruk <antkudruk@gmail.com>",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "xorlab": "file:../xorlab"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

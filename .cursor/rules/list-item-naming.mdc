@@ -1,0 +1,24 @@
+---
+description: Distinguish item and list segment/card names
+alwaysApply: true
+---
+
+# List And Item Naming
+
+Use explicit names for single-item and list containers in segments and cards.
+
+- Use `*Seg` for a single segment item, for example `GroupSeg` or `PeriodSeg`.
+- Use `*ListSeg` for a segment that contains nested items, for example `GroupListSeg` or `PeriodListSeg`.
+- Use `*Card` for a single card item, for example `ElementCard`.
+- Use `*ListCard` for a card that contains nested items, for example `ElementListCard`.
+
+Deviating from this convention is allowed when the parent is not a generic list container of the same kind of item, but a different concept that happens to nest other segments or cards. For example, `WeekSeg` may contain nested `DaySeg` items without renaming the parent to `WeekListSeg`.
+
+Examples:
+
+```typescript
+segFactory({ typeName: "GroupSeg", attrs: group })
+segFactory({ typeName: "GroupListSeg", nested: eMappedFactory(groups, groupSegFactory) })
+cardFactory({ typeName: "ElementCard", attrs: element })
+cardFactory({ typeName: "ElementListCard", nested: eMappedFactory(elements, createElementCard) })
+```

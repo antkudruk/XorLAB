@@ -1,0 +1,129 @@
+---
+description: Keep selfPos, cardFactories, and collection callbacks typed without any
+alwaysApply: true
+---
+
+# Callback Typing Convention
+
+Do not annotate callback parameters with `any` in these three zones:
+
+- `selfPos` handlers on `cardFactory`, `tableFactory`, and `createTree`
+- `cardFactories` handlers on `segFactory`
+- `find` / `forEach` / `map` / `findIndex` callbacks on `EReadCollection` and extending interfaces
+
+Using `any` here is bad practice — it disables inference from preprocessor-generated `GenSegments` / `GenCards` types. Prefer **implicit typing** (omit annotations) or **explicit correct types** from generated files.
+
+A helper returning `: any` (for example `createSelfPos`) prevents strongly-typed `selfPos` inference on `cardFactory`. Annotating `place: any` rejects the typed place segment from `GenSegments`.
+
+Avoid unnecessary `as unknown as` at factory boundaries when runtime and facade prop types are aligned. See [Avoid unnecessary type casts](../../README.md#avoid-unnecessary-type-casts).
+
+See [README Callback Typing Convention](../../README.md#callback-typing-convention).
+
+## Parameter naming
+
+| Callback | 1st arg | 2nd arg |
+|----------|---------|---------|
+| `selfPos` | `place` — segment the card is positioned along | `self` — the card itself |
+| `cardFactories` | `ortho` — orthogonal segment | `self` — the segment owning the factory |
+
+Use `_` for unused parameters. When only one argument is used, name it by position (`place`, `ortho`, or `self`).
+
+## selfPos
+
+Keep handlers inline inside the `cardFactory` object. Do not extract them into helper functions returning `any`.
+
+Incorrect:
+
+```typescript
+const createSelfPos = (element: ChemicalElement): any => ({
+  PeriodListSeg: (place) =>
+    place.nested.find(
+      (periodSeg: any) => periodSeg.attrs.period === element.period
+    ),
+});
+
+selfPos: createSelfPos(element)
+```
+
+Also bad: `PeriodListSeg: (place: any) => ...`
+
+Correct:
+
+```typescript
+selfPos: {
+  PeriodListSeg: (place) =>
+    place.nested.find(
+      (periodSeg) => periodSeg.attrs.period === element.period
+    ),
+}
+```
+
+## selfPos scope
+
+List `selfPos` handlers for every coordinate (place segment type) the card may need. XorLAB calls only the handler whose key matches `place.typeName` along the card's actual placement path — extra keys are inert. A parent [Layer Anchor](../../README.md#layer-anchor-pattern) still scopes which axes apply at runtime. Do not branch on placement axis with conditional spreads.
+
+Incorrect:
+
+```typescript
+selfPos: {
+  WeekSeg: (place) => /* ... */,
+  ...(slot.axis === "group"
+    ? { GroupListSeg: (place) => /* ... */ }
+    : { TeacherListSeg: (place) => /* ... */ }),
+}
+```
+
+Correct — handlers for every coordinate:
+
+```typescript
+selfPos: {
+  WeekSeg: (place) => /* ... */,
+  WeekdaySeg: (place) => /* ... */,
+  GroupListSeg: (place) => /* ... */,
+  TeacherListSeg: (place) => /* ... */,
+}
+```
+
+See [README selfPos scope — no axis conditionals](../../README.md#selfpos-scope--no-axis-conditionals).
+
+## selfPos — no completeness guards
+
+Do not gate `selfPos` on “attrs complete?” checks (e.g. `isCompleteGroupSlot`). For slot-selection display cards, nest the card only when a slot is selected with complete attrs; leave the list empty when cleared. If the card is nested, `selfPos` may trust attrs; if nothing is selected, the card is absent and `selfPos` never runs. Completeness checks inside `selfPos` paper over a lifecycle bug.
+
+See [README SelectController](../../README.md#selectcontroller) (slot value) and [`examples/timetable/src/domain/SlotSelection.ts`](../../examples/timetable/src/domain/SlotSelection.ts).
+
+## cardFactories
+
+Keep handlers inline inside the `segFactory` object.
+
+Incorrect:
+
+```typescript
+cardFactories: {
+  LabelPlaceSeg: (_: any, self: any) =>
+    cardFactory({ /* ... */ }),
+}
+```
+
+Correct:
+
+```typescript
+cardFactories: {
+  LabelPlaceSeg: (_, self) =>
+    cardFactory({ /* ... */ }),
+}
+```
+
+## ECollection callbacks
+
+Incorrect:
+
+```typescript
+place.nested.find((item: any) => item.attrs.period === element.period)
+```
+
+Correct:
+
+```typescript
+place.nested.find((item) => item.attrs.period === element.period)
+```

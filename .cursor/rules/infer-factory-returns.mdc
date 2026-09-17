@@ -1,0 +1,40 @@
+---
+description: Do not widen cardFactory/segFactory returns to ICard/ISeg
+alwaysApply: true
+---
+
+# Infer Factory Return Types
+
+Do **not** annotate functions that return `cardFactory` / `segFactory` results as `ICard` or `ISeg`. That widens the return to the base interface and drops preprocessor-generated `GenCards` / `GenSegments` inference (attrs, nested, typed `selfPos`).
+
+Prefer an inferred return. When a named type is required, use generated `GenCardTypes.<TypeName>` / `GenSegTypes.<TypeName>` — not the widened base interface.
+
+Composite layout/model objects (cards + segments + controllers) use an explicit interface, not `ReturnType<typeof createLayout>`. See [No ReturnType Aliases](no-returntype.mdc).
+
+Incorrect:
+
+```typescript
+export function createRequestedMatrixCard(entries: RequestedEntry[]): ICard {
+  return cardFactory({
+    typeName: "RequestedListCard",
+    nested: eMappedFactory(collection, (entry) =>
+      cardFactory({ typeName: "RequestedCellCard", attrs, selfPos: { /* ... */ } }),
+    ),
+  });
+}
+```
+
+Correct:
+
+```typescript
+export function createRequestedMatrixCard(entries: RequestedEntry[]) {
+  return cardFactory({
+    typeName: "RequestedListCard",
+    nested: eMappedFactory(collection, (entry) =>
+      cardFactory({ typeName: "RequestedCellCard", attrs, selfPos: { /* ... */ } }),
+    ),
+  });
+}
+```
+
+See [README Infer factory returns](../../README.md#infer-factory-returns).

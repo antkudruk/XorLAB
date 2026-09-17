@@ -1,0 +1,80 @@
+---
+description: Trust uniform EMapped nested types; avoid redundant typeName and region identity guards
+globs: examples/**/*.ts,xorlab-interactive/src/**/*.ts
+alwaysApply: false
+---
+
+# Uniform Nested Typing
+
+See [README DragController](../../README.md#dragcontroller) and [mouse-interaction.mdc](mouse-interaction.mdc).
+
+## Uniform EMapped / typed lists
+
+When a card's `nested` is a homogeneous `EMapped` (or other typed collection) of one card kind, trust the generated element type from `childCardAtCoord` / `nested.forEach`. Do **not** guard with `typeName === "…"`.
+
+Keep `typeName` filters only for **heterogeneous** collections (e.g. `seg.cards` mixing header kinds in the periodic table).
+
+To keep nests homogeneous when a parent would otherwise mix card kinds, use the [Type Partition Pattern](../../README.md#type-partition-pattern): intermediate list cards (one per kind) that omit `selfPos` and stretch to the parent.
+
+Incorrect:
+
+```typescript
+const hit = listCard.childCardAtCoord(local);
+if (!hit || hit.typeName !== "LessonCard") {
+  return;
+}
+drag.begin(hit, event);
+
+siblingList.nested.forEach((nested) => {
+  if (nested.typeName === "LessonCard" && nested.attrs.id === lessonId) {
+    nested.fire();
+  }
+});
+```
+
+Correct:
+
+```typescript
+const hit = listCard.childCardAtCoord(local);
+if (!hit) {
+  return;
+}
+drag.begin(hit, event);
+
+siblingList.nested.forEach((nested) => {
+  if (nested.attrs.id === lessonId) {
+    nested.fire();
+  }
+});
+```
+
+## No redundant region identity checks
+
+When a shared `callbackTable` entry fans events to several region-scoped `DragController`s, do **not** compare `listCard` / `self` to the bound region card inside each handler. `DragController.begin` already no-ops via `containsCard` when the hit card is not nested under that controller's `regionCard`; `move` / `end` no-op when no session was started.
+
+Incorrect:
+
+```typescript
+handleMouseDown(listCard, event) {
+  if (listCard !== this.lessonListCard) {
+    return;
+  }
+  // …
+}
+```
+
+Correct — use the event's `self` for coord hit-testing; let `containsCard` scope the region:
+
+```typescript
+handleMouseDown(listCard, event) {
+  const hit = listCard.childCardAtCoord(event.local);
+  if (!hit) {
+    return;
+  }
+  this.dragController.begin(hit, event);
+}
+```
+
+## Single-use helpers
+
+Prefer inlining a private method used at one call site (e.g. put reschedule logic directly in `updateAttrs` instead of `tryReschedule`).

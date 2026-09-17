@@ -1,0 +1,74 @@
+---
+description: Fix missing ortho cardFactories when tableFactory or extrude fails
+globs: examples/**/domain*/**/*.ts,xorlab/src/**/table/**/*.ts,xorlab/src/facade/table.ts,xorlab/src/facade/line.ts
+alwaysApply: false
+---
+
+# Ortho Card Factory Missing
+
+## Trigger
+
+Error text: `No card factory registered for ortho segment type`
+
+Parse from the message:
+- `orthoLine` — ortho segment type name (e.g. `"WeekSeg"`)
+- `item.typeName` — main-line child segment missing the factory (e.g. `"MonthSeg"`)
+- `mainLine` — table main line (e.g. `"PeriodSeg"`)
+
+## Decision
+
+1. **Missing key** — `item.cardFactories[orthoLine]` is absent on the segment factory for `item.typeName`.
+   Add `cardFactories.<orthoLine>` on that segment's `segFactory` call.
+
+2. **Wrong card kind** — a factory exists but returns the wrong kind of card.
+   Use `cardFactory(...)` for simple cells, `ortho.extrude(self)` or `self.extrude(ortho)` for nested tables, or pass custom `orthoFactory` to `tableFactory`.
+
+## Fix A: Add missing cardFactories entry
+
+Use `(ortho, self)` parameter names. See [Callback Typing Convention](../../README.md#callback-typing-convention).
+
+```typescript
+segFactory({
+  typeName: "MonthSeg",
+  cardFactories: {
+    WeekSeg: (ortho, self) => self.extrude(ortho),
+    LabelPlaceSeg: (_, self) =>
+      cardFactory({
+        renderer: textRendererFactory(() => self.attrs.label),
+      }),
+  },
+});
+```
+
+Every nested child type of the table's `mainLine` needs an entry for the table's `orthoLine`. For example, `tableFactory({ mainLine: "PeriodSeg", orthoLine: "WeekSeg" })` requires `cardFactories.WeekSeg` on YearSeg, MonthSeg, WeekNumberSeg, and PeriodSeg itself.
+
+## Fix B: Use a different card strategy
+
+```typescript
+// Simple text cell — not a nested table
+LabelPlaceSeg: (_, weekdaySeg) =>
+  cardFactory({
+    renderer: textRendererFactory(() => weekdaySeg.attrs.weekday.label),
+  }),
+
+// Nested table via extrude shortcut
+WeekSeg: (ortho, self) => self.extrude(ortho),
+
+// Nested table via tableFactory
+HourPlaceSeg: () =>
+  tableFactory({ mainLine: "WeekdaySeg", orthoLine: "HourPlaceSeg" }),
+
+// Bypass per-segment cardFactories entirely
+tableFactory({
+  mainLine: "WeekSeg",
+  orthoLine: "TimePlaceSeg",
+  orthoFactory: (item, ortho) => cardFactory({ /* ... */ }),
+});
+```
+
+## Examples in this repo
+
+- `examples/calendar/src/domain2/week.ts` — simple cells and extrude
+- `examples/calendar/src/domain2/period.ts` — extrude across year/month/week hierarchy
+- `examples/calendar/src/domain2/calendar.ts` — top-level tableFactory with selfPos
+- `examples/timetable/src/domain/Time.ts` — tableFactory and extrude mix

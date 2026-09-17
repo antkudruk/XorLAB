@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Periodic table example</title>
+    <link rel="stylesheet" href="/src/app.css" />
+  </head>
+  <body>
+    <header class="toolbar">
+      <h1>Periodic table example</h1>
+    </header>
+
+    <main class="app-main">
+      <section class="view-section">
+        <h2>Element grid</h2>
+        <p class="view-intro">
+          Chemical elements loaded from CSV and placed on a period-by-group grid via
+          coordinate placement. Lanthanides and actinides share period 6/7 group 3 in
+          the data and stack in one card until separate f-block rows are added.
+        </p>
+        <div class="selection-input-row">
+          <label class="selection-input-label" for="periodic-table-selection-input">Set selection</label>
+          <input
+            id="periodic-table-selection-input"
+            class="selection-input"
+            type="text"
+            placeholder="6, C, or carbon"
+          />
+          <button type="button" id="periodic-table-selection-apply" class="selection-apply">Apply</button>
+        </div>
+        <p id="periodic-table-selection-error" class="selection-input-error" role="alert" hidden></p>
+        <p id="periodic-table-status" class="view-status" aria-live="polite">
+          Loading chemical elements...
+        </p>
+        <div
+          id="periodic-table-host"
+          class="widget-host"
+          role="region"
+          aria-label="Periodic table layout"
+        ></div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

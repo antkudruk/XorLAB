@@ -1,0 +1,210 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #1a1a1a;
+  background: #f6f7f9;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #d8dde6;
+}
+
+.toolbar h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem;
+}
+
+.view-section h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.view-intro,
+.view-status {
+  margin: 0 0 0.75rem;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.selection-input-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.selection-input-label {
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.selection-input {
+  flex: 1 1 180px;
+  min-width: 160px;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.selection-apply {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid #94a3b8;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.selection-apply:hover {
+  background: #f8fafc;
+}
+
+.selection-input-error {
+  margin: 0 0 0.75rem;
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+.selection-input-error[hidden] {
+  display: none;
+}
+
+.widget-host {
+  position: relative;
+  overflow: auto;
+  width: 100%;
+  min-height: 470px;
+  background: #fff;
+  border: 1px solid #d8dde6;
+  border-radius: 8px;
+}
+
+.widget-host .ElementCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  min-height: 56px;
+  font-weight: 600;
+  color: #0f172a;
+  background: linear-gradient(160deg, #e2e8f0, #cbd5e1);
+  border: 1px solid #94a3b8;
+  border-radius: 4px;
+}
+
+.widget-host .ElementCard.ElementCard--hovered {
+  outline: 2px solid #0f172a;
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+.widget-host .ElementCard.ElementCard--selected {
+  box-shadow: inset 0 0 0 3px #1d4ed8;
+  z-index: 2;
+}
+
+.ElementCard-atomicNumber {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #334155;
+}
+
+.ElementCard-symbol {
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+.ElementCard--alkali-metal {
+  background: linear-gradient(160deg, #fde68a, #fbbf24);
+}
+
+.ElementCard--alkaline-earth-metal {
+  background: linear-gradient(160deg, #fef08a, #facc15);
+}
+
+.ElementCard--transition-metal {
+  background: linear-gradient(160deg, #bfdbfe, #60a5fa);
+}
+
+.ElementCard--metal {
+  background: linear-gradient(160deg, #cbd5e1, #94a3b8);
+}
+
+.ElementCard--metalloid {
+  background: linear-gradient(160deg, #bbf7d0, #4ade80);
+}
+
+.ElementCard--nonmetal {
+  background: linear-gradient(160deg, #d9f99d, #a3e635);
+}
+
+.ElementCard--halogen {
+  background: linear-gradient(160deg, #a7f3d0, #34d399);
+}
+
+.ElementCard--noble-gas {
+  background: linear-gradient(160deg, #c4b5fd, #8b5cf6);
+  color: #1e1b4b;
+}
+
+.ElementCard--lanthanide {
+  background: linear-gradient(160deg, #fbcfe8, #f472b6);
+}
+
+.ElementCard--actinide {
+  background: linear-gradient(160deg, #fecdd3, #fb7185);
+}
+
+.ElementCard--transactinide {
+  background: linear-gradient(160deg, #e9d5ff, #c084fc);
+}
+
+.GroupHeaderCard,
+.PeriodHeaderCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+.PeriodHeaderCard {
+  min-width: 40px;
+  min-height: 56px;
+}
+
+.GroupHeaderCard {
+  min-width: 56px;
+  min-height: 40px;
+}
+
+.GroupHeaderCard.GroupHeaderCard--hovered,
+.PeriodHeaderCard.PeriodHeaderCard--hovered {
+  background: #d1d5db;
+}

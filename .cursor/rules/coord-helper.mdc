@@ -1,0 +1,62 @@
+---
+description: Fluent CoordHelper / CardCoordHelper for walking nested Seg/Card trees from mouse events
+globs: xorlab/src/**/*.ts,examples/**/*.ts
+alwaysApply: false
+---
+
+# Coord Helper API
+
+See [README Coord Helper API](../../README.md#coord-helper-api) for the full model.
+
+## When to use
+
+Prefer `self.coordHelper(event.local, event.treeUuid).inner()…` over repeated `childSegAtCoord` / `childCardAtCoord` when:
+
+- descending more than one nested level along a local coordinate
+- folding attrs into an object with `fold` / `get()`
+- drag `updateAttrs` / slot resolve (e.g. WeekSeg → WeekdaySeg → HourSeg)
+
+Use raw `childSegAtCoord(coord, treeUuid)` for a single optional lookup that may return `undefined`.
+
+## Call-site rules
+
+- Call `coordHelper(coord, treeUuid)` on the node that owns `coord` (typically `self` in a mouse handler). Do not call it on an ancestor with a child-relative local.
+- Pass an explicit `treeUuid` — required for multi-widget mounts. Do not use first-Vi helpers. From a card handler targeting a place seg on an axis, pass `event.widgetTreeUuids.horizontal` or `.vertical` as appropriate.
+- `inner()` throws when no Vi or nested child covers the coordinate (fluent types stay non-optional). When a miss should yield `undefined` (e.g. drag outside the grid), wrap the chain in `try/catch`.
+- Do not annotate callbacks with `any`. Prefer implicit typing so `GenSegments` / `GenCards` and `ECollectionItemType<T["nested"]>` apply.
+- `fold` callbacks must return an object literal with parentheses: `(seg) => ({ field: … })`.
+- Do not hand-roll nested `childSegAtCoord` plus local offset arithmetic for multi-level walks.
+
+## Segments
+
+```typescript
+weekSeg.coordHelper(event.local, event.treeUuid)  // CoordHelper<WeekSeg>
+  .inner()                                        // CoordHelper<WeekdaySeg>
+  .peek((weekdaySeg) => { … })
+  .inner()                                        // CoordHelper<HourSeg>
+  .getSeg();
+
+weekSeg.coordHelper(event.local, event.treeUuid)
+  .inner()
+  .fold((weekdaySeg) => ({ weekDay: weekdaySeg.attrs.weekday.number }))
+  .inner()
+  .fold((hourSeg) => ({ hour: hourSeg.attrs.hour }))
+  .get();
+```
+
+Classes: `CoordHelper`, `CoordBasedFold` in `xorlab/src/facade/CoordHelper.ts`.
+
+## Cards
+
+```typescript
+listCard.coordHelper(event.local, event.treeUuid)  // CardCoordHelper<…>
+  .inner()
+  .getCard();
+
+listCard.coordHelper(event.local, event.treeUuid)
+  .inner()
+  .fold((card) => ({ id: card.attrs.id }))
+  .get();
+```
+
+Classes: `CardCoordHelper`, `CardCoordBasedFold` in `xorlab/src/facade/CardCoordHelper.ts`.

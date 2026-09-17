@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poissons — linear algebra example</title>
+    <link rel="stylesheet" href="/src/app.css" />
+  </head>
+  <body>
+    <header class="toolbar">
+      <h1>Hogwarts feast — poisson ingredients</h1>
+    </header>
+
+    <main class="app-main">
+      <p class="view-intro">
+        Matrix multiplication, element-wise product, and sum-up via
+        <code>xorlab-linalg</code>: requested poissons × recipe → ingredients per month;
+        then × prices → costs; then sum by ingredient and by month (Knuts).
+      </p>
+
+      <section class="view-section">
+        <h2>Requested poissons (Poisson × Month)</h2>
+        <div id="host-requested" class="widget-host" role="region" aria-label="Requested poissons"></div>
+      </section>
+
+      <section class="view-section">
+        <h2>Ingredients per poisson (Poisson × Ingredient)</h2>
+        <div id="host-recipe" class="widget-host" role="region" aria-label="Recipe matrix"></div>
+      </section>
+
+      <section class="view-section">
+        <h2>Ingredients requested per month (matrix product)</h2>
+        <div id="host-ingredients-month" class="widget-host" role="region" aria-label="Ingredients per month"></div>
+      </section>
+
+      <section class="view-section">
+        <h2>Prices in Knuts (Ingredient × Month)</h2>
+        <div id="host-prices" class="widget-host" role="region" aria-label="Prices"></div>
+      </section>
+
+      <section class="view-section">
+        <h2>Costs (zipped product)</h2>
+        <div id="host-costs" class="widget-host" role="region" aria-label="Costs"></div>
+      </section>
+
+      <section class="view-section">
+        <h2>Cost per ingredient (sum-up)</h2>
+        <div id="host-cost-ingredient" class="widget-host widget-host--narrow" role="region" aria-label="Cost per ingredient"></div>
+      </section>
+
+      <section class="view-section">
+        <h2>Cost per month (sum-up)</h2>
+        <div id="host-cost-month" class="widget-host widget-host--narrow" role="region" aria-label="Cost per month"></div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

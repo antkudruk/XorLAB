@@ -1,0 +1,1 @@
+{"sessionId":"bbe1ca","runId":"integration-verify","location":"WeekSegWidget.integration.spec.ts","message":"WeekSeg sizing verification","data":{"weekSegWindow":1750,"weekdayWindows":[350,350,350,350,350],"sumWeekdayWindows":1750,"domWidths":[]},"timestamp":1783013772803}

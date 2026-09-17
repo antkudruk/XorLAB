@@ -1,0 +1,68 @@
+---
+description: Pass domain objects as factory attrs; no parallel Attrs mapping types
+alwaysApply: true
+---
+
+# Direct Attrs (No Mapping Types)
+
+Prefer passing the domain object as `attrs` on `segFactory` / `cardFactory`. Do not introduce parallel `*CardAttrs` / `*SegAttrs` types or mapper functions that copy domain fields into a snapshot.
+
+When domain fields are `Property<T>`, keep the Property on attrs and read `.value` at use sites. Do not flatten into plain numbers and sync snapshots back onto the card.
+
+## Correct
+
+```typescript
+export interface Lesson {
+  readonly id: number;
+  readonly weekday: Property<number>;
+  readonly hour: Property<number>;
+  // ...
+}
+
+cardFactory({
+  typeName: "LessonCard",
+  attrs: lesson,
+  selfPos: {
+    WeekdaySeg: (place) =>
+      place.nested.find((it) => it.attrs.hour === lesson.hour.value),
+  },
+});
+
+// At selection / getValue sites:
+weekday: lesson.weekday.value,
+hour: lesson.hour.value,
+```
+
+Also correct: attrs that **are** the domain type (`Group`, `Lesson`), and small inline literals when there is no domain object (`{ dateIso }`, `{ text: "Id" }`).
+
+```typescript
+segFactory({ typeName: "GroupSeg", attrs: group });
+cardFactory({ attrs: { text: "Id" }, renderer: TEXT_RENDERER });
+```
+
+## Incorrect
+
+```typescript
+export type LessonCardAttrs = {
+  readonly id: number;
+  weekday: number;
+  hour: number;
+};
+
+function lessonCardAttrs(lesson: Lesson): LessonCardAttrs {
+  return {
+    id: lesson.id,
+    weekday: lesson.weekday.value,
+    hour: lesson.hour.value,
+  };
+}
+
+cardFactory({
+  typeName: "LessonCard",
+  attrs: lessonCardAttrs(lesson),
+});
+
+// Then syncLessonCardAttrs to keep the snapshot in sync — avoid this.
+```
+
+See [Factory API](factory-api.mdc) for `segFactory` / `cardFactory` usage.

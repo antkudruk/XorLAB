@@ -1,0 +1,24 @@
+ 
+{
+  "name": "monorepo-example",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Anton Kudruk <antkudruk@gmail.com>",
+  "license": "Apache-2.0",
+  "workspaces": [
+    "xorlab",
+    "xorlab-linalg",
+    "xorlab-interactive",
+    "xorlab-discover",
+    "preprocessor-library",
+    "examples/timetable",
+    "examples/periodic-table",
+    "examples/subscription-management",
+    "examples/calendar",
+    "examples/poissons"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "start": "cd react-app && npm start"
+  }
+}

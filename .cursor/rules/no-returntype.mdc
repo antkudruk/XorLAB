@@ -1,0 +1,72 @@
+---
+description: Do not alias factory or layout returns with ReturnType; use Generated types
+alwaysApply: true
+---
+
+# No ReturnType Aliases
+
+Do **not** type cards, segments, or layout/model objects as `ReturnType<typeof someFactory>`. Write an explicit interface and annotate the function.
+
+- cards: `GenCardTypes.<TypeName>`
+- segments: `GenSegTypes.<TypeName>`
+- other values: their public type (`SelectController<string>`, …)
+
+`GenCardTypes` / `GenSegTypes` are globals from preprocessor `generated/*.d.ts` — no import.
+
+Single `cardFactory` / `segFactory` helpers may still infer their return; see [Infer Factory Return Types](infer-factory-returns.mdc). Composite layout/model objects always use an explicit interface.
+
+Framework internals, specs, and preprocessor inference may use `ReturnType`. When no GenEntity type exists, use a named public type rather than `ReturnType`.
+
+See [README Named layout types](../../README.md#named-layout-types).
+
+Incorrect:
+
+```typescript
+export function createMonthlyGridLayout(year: number = MONTHLY_GRID_YEAR) {
+    return {
+        widgetCard: yearCardFactory(year),
+        daySelect,
+        verticalContentSeg: monthRowListSegFactory(),
+        horizontalContentSeg: monthColListSegFactory(),
+    };
+}
+
+export type MonthlyGridLayout = ReturnType<typeof createMonthlyGridLayout>;
+```
+
+Correct:
+
+```typescript
+export interface MonthlyGridLayout {
+    widgetCard: GenCardTypes.YearCard;
+    daySelect: SelectController<string>;
+    verticalContentSeg: GenSegTypes.MonthRowListSeg;
+    horizontalContentSeg: GenSegTypes.MonthColListSeg;
+}
+
+export function createMonthlyGridLayout(
+    year: number = MONTHLY_GRID_YEAR,
+): MonthlyGridLayout {
+    return {
+        widgetCard: yearCardFactory(year),
+        daySelect,
+        verticalContentSeg: monthRowListSegFactory(),
+        horizontalContentSeg: monthColListSegFactory(),
+    };
+}
+```
+
+Also correct, if return type is not reused:
+
+```typescript
+export function createMonthlyGridLayout(
+    year: number = MONTHLY_GRID_YEAR,
+) {
+    return {
+        widgetCard: yearCardFactory(year),
+        daySelect,
+        verticalContentSeg: monthRowListSegFactory(),
+        horizontalContentSeg: monthColListSegFactory(),
+    };
+}
+```

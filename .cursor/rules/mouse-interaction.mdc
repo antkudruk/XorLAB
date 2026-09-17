@@ -1,0 +1,79 @@
+---
+description: Mouse dispatch rules for mouseOver, mouseClick, mouseDoubleClick, mouseDown, mouseDrag, and mouseUp on cards and segments
+globs: xorlab/src/renderer/**/*.ts,examples/**/domain/**/*.ts,examples/**/view/**/*.ts
+alwaysApply: false
+---
+
+# Mouse Interaction
+
+See [README Mouse Interaction](../../README.md#mouse-interaction) for the full model.
+
+## Dispatch rules
+
+On `mousemove` / `click` / `dblclick` / `mousedown`, `dispatchWidgetMouseEvent` (or drag-session dispatch for `mouseDrag` / `mouseUp`) in `xorlab/src/renderer/WidgetMouse.ts` does two independent things:
+
+1. **Card handlers** — `findCardChainAtDisplayCoord` collects every card on the root→leaf hit path. Each card with `mouseOver` / `mouseClick` / `mouseDoubleClick` is invoked in root-to-leaf order. Do not assume only the deepest card receives the event. Sibling overlay cards at the same parent that share the pointer all enter the chain (ordered by ascending `zIndex`, then nested-array index). A model may wire several `SelectController` / `HoverController` instances to different cards on the same widget.
+
+2. **Segment handlers** — `findSegsWithHandlerAtDisplayCoord` walks down from the **root card's** place segments on each axis. All nested segments with handlers fire (e.g. `WeekSeg` → `WeekdaySeg` → `HourSeg`).
+
+## Common mistakes
+
+**Deepest card only.** Parent list cards (e.g. `LessonListCard`) also receive `mouseOver` when the pointer is over a nested self-positioned child (`LessonCard`). Put shared logic on the parent handler if it should run for every cell in the list.
+
+**Segment dispatch from child `viBasis`.** A self-positioned child card's horizontal `viBasis` may point at a leaf segment (e.g. `HourSeg`). Segment handlers must be resolved from the root card using widget coordinates — otherwise ancestor handlers (e.g. `WeekdaySeg.mouseOver`) are skipped.
+
+**Independent axis highlights.** In the periodic-table example, use separate `HoverController` instances (`groupHover`, `periodHover`, `elementHover` in `callbackTable.ts`) for independent region highlights. Do not clear other regions when updating one.
+
+**Region-scoped controllers.** When a widget has several interactive regions (grids, lists, axes), give each region its own `SelectController` / `HoverController` / `MultiSelectController` / `DragController`. Do not share one instance across regions. Selecting, hovering, or dragging in one region must not clear another. See [README Region-scoped controllers](../../README.md#region-scoped-controllers).
+
+**Drag regions (timetable).** `LessonListCard` appears under both `GroupTimetableCard` and `TeacherTimetableCard`. Use **two** `DragController` instances, each with its region's `regionCard`. A shared `callbackTable` entry may fan handlers to both; foreign regions no-op via `containsCard` on `begin`. Do not re-check `listCard === this.regionCard` inside handlers. See [README DragController](../../README.md#dragcontroller) and [uniform-nested-typing.mdc](uniform-nested-typing.mdc).
+
+**Uniform nested hits.** When `childCardAtCoord` comes from a homogeneous `EMapped` list, trust the typed card — do not guard with `typeName === "…"`. See [uniform-nested-typing.mdc](uniform-nested-typing.mdc).
+
+**Disable selection on dragged cards.** Put `user-select: none` and `-webkit-user-select: none` on the draggable card `typeName` class (e.g. `.LessonCard`), not only a `--dragging` modifier. Native text selection on `mousedown` fights the drag gesture.
+
+**Hover vs selection.** `HoverController` emphasis is ephemeral; `SelectController` / `MultiSelectController` selection persists until `value` changes. Keep them independent — hover controllers should not clear select state.
+
+**Select wiring.** Register `mouseClick` on selectable cards and call `select.handleCardClick(self, event)`, or prefer a `callbackTable` entry on `Widget`. After `mountWidget`, call `select.bindWidget(mounted.widget)` so programmatic `value` updates work.
+
+**Callback table.** Prefer `Widget({ callbackTable })` over inline mouse handlers on factories. Table entries override inline handlers when defined. See [Widget configuration](../../README.md#widget-configuration).
+
+**Style sheet.** Prefer `Widget({ styleSheet })` over inline `style` on `segFactory`. StyleSheet entries override inline segment styles when defined.
+
+**Widget-scoped DOM updates.** When highlighting or selecting cards, use `event.widgetTreeUuids.card` (or `widget.treeUuids.card`) to look up `card.vis[treeUuid]`. Do not iterate all `card.vis` entries — a card may be mounted in multiple widgets with different tree UUIDs. Do **not** store `CardVi` or `SegVi` as long-lived fields; Widget owns those trees. See [CardVi and SegVi](../../README.md#cardvi-and-segvi).
+
+## Drag session
+
+`mousedown` starts a capture (`beginWidgetDragSession`). After `DRAG_THRESHOLD_PX`, `mouseDrag` / `mouseUp` fire on the **captured** chain (not the live hit path). An active drag suppresses the following `click`. Prefer `callbackTable` + `DragController`: `updateAttrs` mutates attrs fields from pointer coords — prefer `CoordHelper.fold` for multi-level seg targeting; the controller then calls `card.fire()` on the **dragged** card. The drag-and-drop controller does **not** manipulate HTML. See [README DragController](../../README.md#dragcontroller).
+
+## Handler registration
+
+Handlers are typed as `Mouse*Handler<Self>`; `event.local` is `CoordTypeOf<Self>`
+(`CardCoord` for cards, `SegCoord` for segments). Prefer omitting annotations so inference applies.
+
+```typescript
+// Segment handler — local is a scalar along one axis
+segFactory({
+  typeName: "WeekdaySeg",
+  mouseOver: (event, weekdaySeg) => { /* event.local: SegCoord */ },
+});
+
+// Card handler — local is a pair in that card's coordinate space
+cardFactory({
+  typeName: "LessonListCard",
+  mouseOver: (event, self) => { /* event.local: CardCoord */ },
+  mouseDoubleClick: (event, self) => { /* event.local: CardCoord */ },
+});
+```
+
+## Hit-test helpers
+
+| Function | Use |
+|----------|-----|
+| `findCardChainAtDisplayCoord` | All cards at a pointer, with per-card `displayLocal` (includes sibling overlays) |
+| `findDeepestCardVi` | Leaf card only (last chain entry) |
+| `findSegsWithHandlerAtDisplayCoord` | Segments with handlers along one axis |
+
+For fluent multi-level descent / fold from a handler, use `self.coordHelper(event.local, event.treeUuid)` — see [Coord Helper API](../../README.md#coord-helper-api) and [coord-helper.mdc](coord-helper.mdc).
+
+Tests: `xorlab/src/renderer/MouseInteraction.spec.ts`, `xorlab/src/renderer/CoordHitTest.spec.ts`.
