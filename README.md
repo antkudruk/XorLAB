@@ -2,6 +2,10 @@
 
 XorLAB Project
 
+## Development state
+
+Development is **in progress**
+
 ## Why XorLAB
 
 XorLAB builds multi-axis grids whose **layout structure reflects relations among your business objects**, rather than a flat table with a separate column schema.
